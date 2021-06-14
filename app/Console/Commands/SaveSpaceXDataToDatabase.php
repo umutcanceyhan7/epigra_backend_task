@@ -38,8 +38,7 @@ class SaveSpaceXDataToDatabase extends Command
      */
     public function handle()
     {
-        // $spaceXDatabase = new spaceXModel();
-        // $spaceXDatabase->capsule_serial
-        // return ;
+        
+        return "şimdilik bir şey yok";
     }
 }

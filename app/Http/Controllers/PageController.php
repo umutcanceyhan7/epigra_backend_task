@@ -10,7 +10,5 @@ class PageController extends Controller
     //
     function index()
     {
-        $d['capsules'] = SpaceXController::fetchData();
-        return view('spaceX', $d);
     }
 }
