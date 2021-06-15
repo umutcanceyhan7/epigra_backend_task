@@ -15,16 +15,17 @@ class CreateSpaceXApiModelsTable extends Migration
     {
         Schema::create('space_x_api_models', function (Blueprint $table) {
             $table->id();
-            $table->string('capsule_serial')->nullable(); #
-            $table->string('capsule_id')->nullable(); #
-            $table->string('status')->nullable(); #
+            $table->string('capsule_serial');
+            $table->string('capsule_id');
+            $table->string('status');
             $table->string('original_launch')->nullable();
             $table->integer('original_launch_unix')->nullable();
-            $table->string('missions')->nullable(); #
-            $table->string('landings')->nullable(); #
-            $table->string('type')->nullable(); #
+            $table->string('missions');
+            $table->string('landings');
+            $table->string('type');
             $table->text('details')->nullable();
-            $table->integer('reuse_count')->nullable(); #
+            $table->integer('reuse_count');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

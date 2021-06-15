@@ -21,3 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/dene', [SpaceXController::class, 'index']);
 Route::post('/dene', [SpaceXController::class, 'store']);
+Route::get('/dene/{id}', [SpaceXController::class, 'show']);
+Route::put('/dene/{id}', [SpaceXController::class, 'update']);
+Route::delete('/dene/{id}', [SpaceXController::class, 'destroy']);

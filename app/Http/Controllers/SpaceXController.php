@@ -61,7 +61,13 @@ class SpaceXController extends Controller
      */
     public function show($id)
     {
-        //
+        $capsule = SpaceXApiModel::where('id', $id)->get();
+
+        if ($capsule != null) {
+            return response()->json($capsule);
+        } else {
+            return response('The instance that you are looking for could not be found!', 404);
+        }
     }
 
     /**
@@ -73,7 +79,22 @@ class SpaceXController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $capsule = SpaceXApiModel::where('id', $id);
+        if($capsule == null){
+            $response = SpaceXController::store($request);
+            return $response;
+        }
+        else if($capsule == []){
+            $response = SpaceXController::store($request);
+            return $response;
+        }
+        else{
+            $capsule = $capsule->update($request->all());
+
+            return response('The instance is updated successfully!', 200);
+        
+        }
+        
     }
 
     /**
@@ -84,6 +105,14 @@ class SpaceXController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $capsule = SpaceXApiModel::where('id', $id);
+
+        if ($capsule != null) {
+            $capsule->delete();
+            return response('The instance is deleted successfully!', 204);
+        } else {
+
+            return response('The instance that you are looking for could not be found!', 404);
+        }
     }
 }
