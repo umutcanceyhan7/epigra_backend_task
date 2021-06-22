@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SpaceXDataFetchEvent;
+use App\Events\SyncSpaceXDataToDatabaseEvent;
 use App\Models\SpaceXApiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -16,9 +18,9 @@ class SpaceXController extends Controller
      */
     public function index()
     {
-        $rawData = Http::get("https://api.spacexdata.com/v3/capsules");
-        $rawData = json_decode($rawData);
-        return response($rawData, 200);
+
+        
+
     }
 
     /**
@@ -29,26 +31,7 @@ class SpaceXController extends Controller
      */
     public function store(Request $request)
     {
-        $request_body = $request->all();
-        foreach ($request_body as $capsule) {
-            if (gettype($capsule['missions']) == gettype(array())) {
-                $missions = serialize($capsule['missions']);
-            } else {
-                $missions = $capsule['missions'];
-            }
-            $tempModel = new SpaceXApiModel();
-            $tempModel->capsule_serial = $capsule['capsule_serial'];
-            $tempModel->capsule_id = $capsule['capsule_id'];
-            $tempModel->status = $capsule['status'];
-            $tempModel->original_launch = $capsule['original_launch'];
-            $tempModel->original_launch_unix = $capsule['original_launch_unix'];
-            $tempModel->missions = $missions;
-            $tempModel->landings = $capsule['landings'];
-            $tempModel->type = $capsule['type'];
-            $tempModel->details = $capsule['details'];
-            $tempModel->reuse_count = $capsule['reuse_count'];
-            $tempModel->save();
-        }
+        
 
         return response('Model/s are added to database successfully', 201);
     }
@@ -61,12 +44,12 @@ class SpaceXController extends Controller
      */
     public function show($id)
     {
-        $capsule = SpaceXApiModel::where('id', $id)->get();
+        $capsule = SpaceXApiModel::where('id', $id)->first();
 
-        if ($capsule != null) {
-            return response()->json($capsule);
-        } else {
+        if (is_null($capsule)) {
             return response('The instance that you are looking for could not be found!', 404);
+        } else {
+            return response('Success', 200)->json($capsule);
         }
     }
 
@@ -79,22 +62,17 @@ class SpaceXController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $capsule = SpaceXApiModel::where('id', $id);
-        if($capsule == null){
-            $response = SpaceXController::store($request);
-            return $response;
-        }
-        else if($capsule == []){
-            $response = SpaceXController::store($request);
-            return $response;
-        }
-        else{
-            $capsule = $capsule->update($request->all());
+        # Get the model from database
+        $tempModel = SpaceXApiModel::where('id', $id)->first();
+        # If the model is empty return 404
+        if (is_null($tempModel)) {
+            return response('Model is Null or Deleted!', 404);
+        } else {
+            # Update the model with its given parameters
+            $tempModel = $tempModel->update($request->all());
 
             return response('The instance is updated successfully!', 200);
-        
         }
-        
     }
 
     /**
@@ -105,7 +83,7 @@ class SpaceXController extends Controller
      */
     public function destroy($id)
     {
-        $capsule = SpaceXApiModel::where('id', $id);
+        $capsule = SpaceXApiModel::where('id', $id)->first();
 
         if ($capsule != null) {
             $capsule->delete();
