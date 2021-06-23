@@ -25,7 +25,6 @@ class CreateSpaceXApiModelsTable extends Migration
             $table->string('type');
             $table->text('details')->nullable();
             $table->integer('reuse_count');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

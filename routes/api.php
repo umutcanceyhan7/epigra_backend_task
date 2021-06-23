@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SpaceXController;
+use App\Http\Controllers\SpaceXApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/dene', [SpaceXController::class, 'index']);
-Route::post('/dene', [SpaceXController::class, 'store']);
-Route::get('/dene/{id}', [SpaceXController::class, 'show']);
-Route::put('/dene/{id}', [SpaceXController::class, 'update']);
-Route::delete('/dene/{id}', [SpaceXController::class, 'destroy']);
+Route::get('/capsules', [SpaceXApiController::class, 'index']);
+Route::post('/capsules', [SpaceXApiController::class, 'store']);
+Route::get('/capsules/{id}', [SpaceXApiController::class, 'show']);
+Route::put('/capsules/{id}', [SpaceXApiController::class, 'update']);
+Route::delete('/capsules/{id}', [SpaceXApiController::class, 'destroy']);
