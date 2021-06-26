@@ -37,7 +37,39 @@ class FetchDataFromSpaceX extends Command
     }
 
     /**
-     * Execute the console command.
+     * Checks if the missions property is array or not.
+     * If it is array serializes it to store in database
+     * else returns it as so.
+     */
+
+    public function checkMissionsProperty($missionsProperty)
+    {
+        if (is_array($missionsProperty)) {
+            $missions = serialize($missionsProperty);
+        } else {
+            $missions = $missionsProperty;
+        }
+        return $missions;
+    }
+
+    public function assignProperties($model, $dataArray)
+    {
+        $model->capsule_serial = $dataArray['capsule_serial'];
+        $model->capsule_id = $dataArray['capsule_id'];
+        $model->status = $dataArray['status'];
+        $model->original_launch = $dataArray['original_launch'];
+        $model->original_launch_unix = $dataArray['original_launch_unix'];
+        $model->landings = $dataArray['landings'];
+        $model->type = $dataArray['type'];
+        $model->details = $dataArray['details'];
+        $model->reuse_count = $dataArray['reuse_count'];
+    }
+
+    /**
+     * Fetch data from api with get request, fires an event
+     * Loops through every fetched objects and checks if the objects in array or not.
+     * If there is an object with same serial then update the fetched data
+     * Else create a new object in database.
      *
      * @return int
      */
@@ -51,25 +83,42 @@ class FetchDataFromSpaceX extends Command
         $rawCapsulesDataArray = json_decode($rawCapsulesData, true);
 
         # loop all capsules and store them to database
+
         foreach ($rawCapsulesDataArray as $capsule) {
-            if (is_array($capsule['missions'])) {
-                $missions = serialize($capsule['missions']);
+
+
+
+            #VERİ VARSA UPDATELEMEK YERİNE YENİDEN OLUŞTURUYOR PROBLEM VAR!
+
+            $tempUpdateModel = SpaceXApiModel::where('id', $capsule['capsule_serial'])->first();
+
+            # If the same id model is in database just update and save to database,
+            # else create new model and save to database.
+
+
+            if ($tempUpdateModel) {
+
+                $missions = $this->checkMissionsProperty($capsule['missions']);
+
+                $tempUpdateModel->missions = $missions;
+
+                $this->assignProperties($tempUpdateModel, $capsule);
+
+                $tempUpdateModel->save();
             } else {
-                $missions = $capsule['missions'];
+
+                $tempModel = new SpaceXApiModel();
+
+                $missions = $this->checkMissionsProperty($capsule['missions']);
+
+                $tempModel->missions = $missions;
+
+                $this->assignProperties($tempModel, $capsule);
+
+                $tempModel->save();
             }
-            $tempModel = new SpaceXApiModel();
-            $tempModel->capsule_serial = $capsule['capsule_serial'];
-            $tempModel->capsule_id = $capsule['capsule_id'];
-            $tempModel->status = $capsule['status'];
-            $tempModel->original_launch = $capsule['original_launch'];
-            $tempModel->original_launch_unix = $capsule['original_launch_unix'];
-            $tempModel->missions = $missions;
-            $tempModel->landings = $capsule['landings'];
-            $tempModel->type = $capsule['type'];
-            $tempModel->details = $capsule['details'];
-            $tempModel->reuse_count = $capsule['reuse_count'];
-            $tempModel->save();
         }
+
         # fire an event/listener when store process finishes.
         event(new SyncSpaceXDataToDatabaseEvent());
     }
