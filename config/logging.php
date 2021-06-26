@@ -35,6 +35,12 @@ return [
     */
 
     'channels' => [
+        'spacexapilog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/spacexapi.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

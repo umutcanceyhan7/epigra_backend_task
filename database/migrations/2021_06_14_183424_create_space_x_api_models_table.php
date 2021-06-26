@@ -15,7 +15,7 @@ class CreateSpaceXApiModelsTable extends Migration
     {
         Schema::create('space_x_api_models', function (Blueprint $table) {
             $table->id();
-            $table->string('capsule_serial');
+            $table->string('capsule_serial')->unique();
             $table->string('capsule_id');
             $table->string('status');
             $table->string('original_launch')->nullable();

@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(FetchDataFromSpaceX::class)->everyMinute();
+        $schedule->command(FetchDataFromSpaceX::class)->everyThreeMinutes();
     }
 
     /**

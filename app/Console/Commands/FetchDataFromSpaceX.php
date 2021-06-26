@@ -9,6 +9,7 @@ use App\Events\SpaceXDataFetchEvent;
 use App\Events\SyncSpaceXDataToDatabaseEvent;
 use App\Models\SpaceXApiModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FetchDataFromSpaceX extends Command
 {
@@ -90,7 +91,7 @@ class FetchDataFromSpaceX extends Command
 
             #VERİ VARSA UPDATELEMEK YERİNE YENİDEN OLUŞTURUYOR PROBLEM VAR!
 
-            $tempUpdateModel = SpaceXApiModel::where('id', $capsule['capsule_serial'])->first();
+            $tempUpdateModel = SpaceXApiModel::where('capsule_serial', $capsule['capsule_serial'])->first();
 
             # If the same id model is in database just update and save to database,
             # else create new model and save to database.
@@ -121,5 +122,6 @@ class FetchDataFromSpaceX extends Command
 
         # fire an event/listener when store process finishes.
         event(new SyncSpaceXDataToDatabaseEvent());
+        Log::channel('spacexapilog')->info(json_encode($rawCapsulesDataArray));
     }
 }
