@@ -76,9 +76,9 @@ class SpaceXApiController extends Controller
      * @return \Illuminate\Http\Response
      * if process is successfull returns response with 200 Http code else 404
      */
-    public function show($id)
+    public function show($capsule_serial)
     {
-        $capsule = SpaceXApiModel::findOrFail($id);
+        $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail();
 
         return response()->json($capsule);
     }
@@ -91,7 +91,7 @@ class SpaceXApiController extends Controller
      * @return \Illuminate\Http\Response
      * if process is successfull returns response with 200 Http code else 404
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $capsule_serial)
     {
         # Validation for requested data!
 
@@ -106,12 +106,12 @@ class SpaceXApiController extends Controller
             'original_launch_unix' => 'nullable',
             'details' => 'nullable',
         ]);
-        
+
         if ($validator->fails()) {
             return response('Bad request: The posted object has validation problems!', 400);
         } else {
             # Get the model from database
-            $capsule = SpaceXApiModel::findOrFail($id);
+            $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail($capsule_serial);
 
             # Update the model with its given parameters
             $capsule = $capsule->update($request->all());
@@ -127,12 +127,21 @@ class SpaceXApiController extends Controller
      * @return \Illuminate\Http\Response 
      * if process is successfull returns response with 204 Http code else 404.
      */
-    public function destroy($id)
+    public function destroy($capsule_serial)
     {
-        $capsule = SpaceXApiModel::findOrFail($id);
+        $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail($capsule_serial);
 
         $capsule->delete();
 
         return response('The instance is deleted successfully!', 204);
+    }
+
+    public function showByStatus(Request $request)
+    {
+        $status = $request->query('status');
+
+        $capsules = SpaceXApiModel::where('status', $status)->firstOrFail();
+
+        return response()->json($capsules);
     }
 }

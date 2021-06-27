@@ -19,8 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::get('/capsules?{params}', [SpaceXApiController::class, 'showByStatus']);
 Route::get('/capsules', [SpaceXApiController::class, 'index']);
 Route::post('/capsules', [SpaceXApiController::class, 'store']);
-Route::get('/capsules/{id}', [SpaceXApiController::class, 'show']);
-Route::put('/capsules/{id}', [SpaceXApiController::class, 'update']);
-Route::delete('/capsules/{id}', [SpaceXApiController::class, 'destroy']);
+Route::get('/capsules/{capsule_serial}', [SpaceXApiController::class, 'show']);
+Route::put('/capsules/{capsule_serial}', [SpaceXApiController::class, 'update']);
+Route::delete('/capsules/{capsule_serial}', [SpaceXApiController::class, 'destroy']);
