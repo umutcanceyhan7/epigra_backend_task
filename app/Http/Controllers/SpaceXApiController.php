@@ -136,12 +136,17 @@ class SpaceXApiController extends Controller
         return response('The instance is deleted successfully!', 204);
     }
 
-    public function showByStatus(Request $request)
+    public function showByFilter(Request $request)
     {
-        $status = $request->query('status');
 
-        $capsules = SpaceXApiModel::where('status', $status)->firstOrFail();
+        if (!$request->exists('status')) {
+            return $this->index();
+        } else {
+            $status = $request->query('status');
 
-        return response()->json($capsules);
+            $capsules = SpaceXApiModel::where('status', $status)->get();
+
+            return response()->json($capsules);
+        }
     }
 }
