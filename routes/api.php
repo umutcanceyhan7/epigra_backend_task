@@ -27,9 +27,9 @@ Route::prefix('/user')->group(function () {
 });
 
 
-Route::get('/capsules', [SpaceXApiController::class, 'index']);
-Route::get('/capsules', [SpaceXApiController::class, 'showByFilter']);
-Route::post('/capsules', [SpaceXApiController::class, 'store']);
-Route::get('/capsules/{capsule_serial}', [SpaceXApiController::class, 'show']);
-Route::put('/capsules/{capsule_serial}', [SpaceXApiController::class, 'update']);
-Route::delete('/capsules/{capsule_serial}', [SpaceXApiController::class, 'destroy']);
+Route::get('/capsules', [SpaceXApiController::class, 'index'])->name('spaceXApi.index');
+Route::get('/capsules', [SpaceXApiController::class, 'showByFilter'])->name('spaceXApi.showByFilter');
+Route::post('/capsules', [SpaceXApiController::class, 'store'])->name('spaceXApi.store');
+Route::get('/capsules/{capsule_serial}', [SpaceXApiController::class, 'show'])->name('spaceXApi.show');
+Route::put('/capsules/{capsule_serial}', [SpaceXApiController::class, 'update'])->name('spaceXApi.update');
+Route::delete('/capsules/{capsule_serial}', [SpaceXApiController::class, 'destroy'])->name('spaceXApi.destroy');
