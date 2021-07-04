@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SpaceXApiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use phpDocumentor\Reflection\Types\Null_;
 
 class SpaceXApiController extends Controller
 {
@@ -113,6 +114,15 @@ class SpaceXApiController extends Controller
             # Get the model from database
             $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail($capsule_serial);
 
+            if (is_array($request->missions)) {
+
+                $missions = serialize($request->missions);
+                $request->missions = $missions;
+            } else {
+                $missions = $request->missions;
+                $request->missions = $missions;
+            }
+
             # Update the model with its given parameters
             $capsule = $capsule->update($request->all());
 
@@ -146,7 +156,11 @@ class SpaceXApiController extends Controller
 
             $capsules = SpaceXApiModel::where('status', $status)->get();
 
-            return response()->json($capsules);
+            if ($capsules->count() == 0) {
+                return response('There is not model with this query parameter', 404);
+            } else {
+                return response()->json($capsules);
+            }
         }
     }
 }
