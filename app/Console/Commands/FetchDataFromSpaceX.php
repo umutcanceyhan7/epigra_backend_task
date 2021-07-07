@@ -83,7 +83,7 @@ class FetchDataFromSpaceX extends Command
      * If there is an object with same serial then update the fetched data
      * Else create a new object in database.
      *
-     * @return int
+     * After creation if all datas are fetched output "Success" else output "Fail"
      */
     public function handle()
     {
@@ -96,7 +96,7 @@ class FetchDataFromSpaceX extends Command
         # loop all capsules and store them to database
 
         foreach ($rawCapsulesDataArray as $capsule) {
-            
+
             $tempUpdateModel = SpaceXApiModel::where('capsule_serial', $capsule['capsule_serial'])->first();
 
             # If the same id model is in database just update and save to database,
@@ -127,5 +127,16 @@ class FetchDataFromSpaceX extends Command
         # fire an event/listener when store process finishes.
         event(new SyncSpaceXDataToDatabaseEvent());
         Log::channel('spacexapilog')->info(json_encode($rawCapsulesDataArray));
+
+        # Fetched Data Count calculated
+        $fetchedDataCount = count($rawCapsulesDataArray);
+        # Database model count calculated
+        $databaseModelCount = count(SpaceXApiModel::all());
+        # If the counts are even we can say process successful else failed.
+        if ($fetchedDataCount == $databaseModelCount) {
+            $this->line('Success');
+        } else {
+            $this->line('Fail');
+        }
     }
 }

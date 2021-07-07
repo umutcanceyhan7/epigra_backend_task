@@ -12,6 +12,7 @@ use Tests\TestCase;
 
 use App\Events\SpaceXDataFetchEvent;
 use App\Events\SyncSpaceXDataToDatabaseEvent;
+use Illuminate\Support\Facades\Artisan;
 
 class SpaceXDataFetchCommandIntegrationTest extends TestCase
 {
@@ -25,8 +26,7 @@ class SpaceXDataFetchCommandIntegrationTest extends TestCase
      */
     public function test_command_can_fetch_data_from_spacex_api()
     {
-        
-        
+        # Call command it returns count of fetched data
+        $this->artisan('FetchDataFromSpaceX')->expectsOutput('Success')->doesntExpectOutput('Fail');
     }
-
 }
