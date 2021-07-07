@@ -30,7 +30,7 @@ class SpaceXApiController extends Controller
     {
         # Validation for requested data!
         $validator = Validator::make($request->all(), [
-            'capsule_serial' => 'required|unique:space_x_api_models',
+            'capsule_serial' => 'required|unique:space_x_api_models,capsule_serial',
             'capsule_id' => 'required',
             'status' => 'required',
             'landings' => 'required',
@@ -44,8 +44,6 @@ class SpaceXApiController extends Controller
         # If validation fails return 400 response code for bad request. Else add model to database and return 201.
 
         if ($validator->fails()) {
-            $de = $validator->failed();
-            var_dump($de);
             return response('Bad request: The posted object has validation problems', 400);
         } else {
             if (is_array($request->missions)) {
@@ -95,7 +93,6 @@ class SpaceXApiController extends Controller
     public function update(Request $request, $capsule_serial)
     {
         # Validation for requested data!
-
         $validator = Validator::make($request->all(), [
             'capsule_serial' => 'required',
             'capsule_id' => 'required',
@@ -112,19 +109,16 @@ class SpaceXApiController extends Controller
             return response('Bad request: The posted object has validation problems!', 400);
         } else {
             # Get the model from database
-            $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail($capsule_serial);
+            $capsule = SpaceXApiModel::where('capsule_serial', $capsule_serial)->firstOrFail();
 
             if (is_array($request->missions)) {
 
                 $missions = serialize($request->missions);
                 $request->missions = $missions;
-            } else {
-                $missions = $request->missions;
-                $request->missions = $missions;
             }
 
             # Update the model with its given parameters
-            $capsule = $capsule->update($request->all());
+            $capsule->update($request->all());
 
             return response('The instance is updated successfully!', 200);
         }
@@ -159,7 +153,7 @@ class SpaceXApiController extends Controller
             if ($capsules->count() == 0) {
                 return response('There is not model with this query parameter', 404);
             } else {
-                return response()->json($capsules);
+                return response()->json($capsules, 200);
             }
         }
     }

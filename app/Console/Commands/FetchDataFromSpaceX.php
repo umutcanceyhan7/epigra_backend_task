@@ -66,6 +66,17 @@ class FetchDataFromSpaceX extends Command
         $model->reuse_count = $dataArray['reuse_count'];
     }
 
+    public function fetchDataAndReturnDecodedData($url)
+    {
+        # fetch data from api using HTTP::get request
+        $rawData = Http::get('https://api.spacexdata.com/v3/capsules');
+
+        # decode fetched data and turn it to array.
+        $decodedData = json_decode($rawData, true);
+
+        return $decodedData;
+    }
+
     /**
      * Fetch data from api with get request, fires an event
      * Loops through every fetched objects and checks if the objects in array or not.
@@ -76,26 +87,20 @@ class FetchDataFromSpaceX extends Command
      */
     public function handle()
     {
-        # fetch data from api using HTTP::get request
-        $rawCapsulesData = Http::get('https://api.spacexdata.com/v3/capsules');
+        $url = 'https://api.spacexdata.com/v3/capsules';
+
+        $rawCapsulesDataArray = $this->fetchDataAndReturnDecodedData($url);
         # fire an event/listener when fetch process starts
         event(new SpaceXDataFetchEvent());
-        # decode fetched data and turn it to array.
-        $rawCapsulesDataArray = json_decode($rawCapsulesData, true);
 
         # loop all capsules and store them to database
 
         foreach ($rawCapsulesDataArray as $capsule) {
-
-
-
-            #VERİ VARSA UPDATELEMEK YERİNE YENİDEN OLUŞTURUYOR PROBLEM VAR!
-
+            
             $tempUpdateModel = SpaceXApiModel::where('capsule_serial', $capsule['capsule_serial'])->first();
 
             # If the same id model is in database just update and save to database,
             # else create new model and save to database.
-
 
             if ($tempUpdateModel) {
 
@@ -119,7 +124,6 @@ class FetchDataFromSpaceX extends Command
                 $tempModel->save();
             }
         }
-
         # fire an event/listener when store process finishes.
         event(new SyncSpaceXDataToDatabaseEvent());
         Log::channel('spacexapilog')->info(json_encode($rawCapsulesDataArray));

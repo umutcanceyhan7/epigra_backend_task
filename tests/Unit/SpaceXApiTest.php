@@ -21,7 +21,7 @@ class SpaceXApiTest extends TestCase
     public function test_show_by_filter_method_can_go_index_method_and_get_all_models_if_there_is_no_query_parameters()
     {
         #create temp model for database.
-        $this->test_store_method_can_create_spacex_model();
+        SpaceXApiModel::factory()->create();
         #test get model and response.
         $this->get(route('spaceXApi.showByFilter'))->assertStatus(200)->assertJsonCount(1);
     }
@@ -32,21 +32,10 @@ class SpaceXApiTest extends TestCase
     public function test_store_method_can_create_spacex_model()
     {
 
-        $tempModel = [
-            'capsule_serial' => 'C1000',
-            'capsule_id' => 'dragon33',
-            'status' => 'retired',
-            'original_launch' => '2010-12-08T15:43:00.000Z',
-            'original_launch_unix' => '1291822980',
-            'missions' => '[{"name":"COTS 1","flight":7}]',
-            'landings' => '1',
-            'type' => 'Dragon 1.0',
-            'details' => 'Reentered after three weeks in orbit',
-            'reuse_count' => '0',
-        ];
+        $tempModel = SpaceXApiModel::factory()->make();
 
 
-        $this->post(route('spaceXApi.store'), $tempModel)->assertStatus(201);
+        $this->post(route('spaceXApi.store'), $tempModel->toArray())->assertStatus(201);
     }
 
     /**
@@ -55,9 +44,9 @@ class SpaceXApiTest extends TestCase
     public function test_show_by_filter_method_can_filter_models_according_to_query_parameters()
     {
         #create temp model for database
-        $this->test_store_method_can_create_spacex_model();
+        $tempModel = SpaceXApiModel::factory()->create();
         #test showByFilter method
-        $this->get(route('spaceXApi.showByFilter', ['status' => 'retired']))->assertStatus(200);
+        $this->get(route('spaceXApi.showByFilter', ['status' => $tempModel->status]))->assertStatus(200);
     }
 
     /**
@@ -66,22 +55,12 @@ class SpaceXApiTest extends TestCase
 
     public function test_update_method_can_update_spacex_model()
     {
-        $this->test_store_method_can_create_spacex_model();
 
-        $tempModel = [
-            'capsule_serial' => 'C1000',
-            'capsule_id' => 'dragon33',
-            'status' => 'faded',
-            'original_launch' => '2010-12-08T15:43:00.000Z',
-            'original_launch_unix' => '1291822980',
-            'missions' => '[{"name":"COTS 1","flight":7}]',
-            'landings' => '1',
-            'type' => 'Dragon 1.0',
-            'details' => 'Reentered after three weeks in orbit',
-            'reuse_count' => '0',
-        ];
+        $tempModel1 = SpaceXApiModel::factory()->create();
 
-        $this->put(route('spaceXApi.update', $tempModel['capsule_serial']), $tempModel)->assertStatus(200)->assertSee('The instance is updated successfully!');
+        $tempModel2 = SpaceXApiModel::factory()->make();
+
+        $this->put(route('spaceXApi.update', $tempModel1->capsule_serial), $tempModel2->toArray())->assertStatus(200)->assertSee('The instance is updated successfully!');
     }
 
     /**
@@ -90,10 +69,7 @@ class SpaceXApiTest extends TestCase
     public function test_show_method_shows_correct_spacex_model()
     {
         #create temp model to database
-        $this->test_store_method_can_create_spacex_model();
-
-        #get temp model
-        $tempModel = SpaceXApiModel::first();
+        $tempModel = SpaceXApiModel::factory()->create();
 
         #tests the request and response than tests if the model is the correct spacex model.
         $this->get(route('spaceXApi.show', ['capsule_serial' => $tempModel->capsule_serial]))->assertStatus(200)->assertSee(['capsule_serial' => $tempModel->capsule_serial]);
@@ -104,10 +80,8 @@ class SpaceXApiTest extends TestCase
      */
     public function test_destroy_method_deletes_spacex_model()
     {
-        $this->test_store_method_can_create_spacex_model();
+        $tempModel = SpaceXApiModel::factory()->create();
 
-        $tempModel = SpaceXApiModel::first();
-
-        $this->delete(route('spaceXApi.destroy', ['capsule_serial' => $tempModel->capsule_serial]), ['capsule_serial' => 'C1000'])->assertStatus(204);
+        $this->delete(route('spaceXApi.destroy', ['capsule_serial' => $tempModel->capsule_serial]))->assertStatus(204);
     }
 }
