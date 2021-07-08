@@ -21,7 +21,7 @@ class CreateSpaceXApiModelsTable extends Migration
             $table->string('original_launch')->nullable();
             $table->integer('original_launch_unix')->nullable();
             $table->string('missions');
-            $table->string('landings');
+            $table->integer('landings');
             $table->string('type');
             $table->text('details')->nullable();
             $table->integer('reuse_count');
