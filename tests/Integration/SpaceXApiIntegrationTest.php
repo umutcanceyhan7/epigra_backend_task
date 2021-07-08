@@ -3,11 +3,12 @@
 namespace Tests\Integration;
 
 use App\Models\SpaceXApiModel;
+use App\Models\User;
 use Database\Factories\SpaceXApiModelFactory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class SpaceXApiIntegrationTest extends TestCase
@@ -21,6 +22,7 @@ class SpaceXApiIntegrationTest extends TestCase
      */
     public function test_spacex_resource_api_can_work_functionally()
     {
+        Passport::actingAs(User::factory()->create());
 
         $tempModel = SpaceXApiModel::factory()->make();
 

@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Models\SpaceXApiModel;
+use App\Models\User;
+use Laravel\Passport\Passport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
@@ -14,6 +16,10 @@ class SpaceXApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function __construct()
+    {
+        Passport::actingAs(User::factory()->create());
+    }
     /**
      * Test if the request has no query parameters, show by filter method calls index method and gets all models.
      */

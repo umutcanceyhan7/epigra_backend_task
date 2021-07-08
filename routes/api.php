@@ -23,9 +23,9 @@ use App\Http\Controllers\SpaceXApiController;
 
 // You can login using
 Route::prefix('/user')->group(function () {
-    Route::post('/register', [ApiLoginController::class, 'register']);
-    Route::post('/login', [ApiLoginController::class, 'login']);
-    Route::get('/login', [ApiLoginController::class, 'login']);
+    Route::post('/register', [ApiLoginController::class, 'register'])->name('spaceXApi.register');
+    Route::post('/login', [ApiLoginController::class, 'login'])->name('spaceXApi.login');
+    Route::get('/login', [ApiLoginController::class, 'login'])->name('spaceXApi.login.index');
 });
 
 Route::middleware('auth:api')->group(function () {
