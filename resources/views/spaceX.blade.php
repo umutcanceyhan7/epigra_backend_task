@@ -7,8 +7,9 @@
     <title>Space X</title>
 </head>
 <body>
-    @foreach($capsules as $caps)
-        {{ $caps }}
-    @endforeach
+        <h2>
+            Welcome, you are authanticated user. (OAuth2) 
+            You can use api now.
+        </h2>
 </body>
 </html>
